@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="jmp123">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../Java/network/jmp123.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
