@@ -65,5 +65,5 @@
 最后非常感谢徐老师这一个学期的教导，谢谢您！
 
 
-## P.S. 项目的代码已提交在GitHub上，地址为：https://github.com/liaboveall/swimSystem
-### 人生第一个GitHub项目，希望老师能够看到，谢谢！
+### P.S. 项目的代码已提交在GitHub上，地址为：https://github.com/liaboveall/swimSystem
+#### 人生第一个GitHub项目，希望老师能够看到，谢谢！
