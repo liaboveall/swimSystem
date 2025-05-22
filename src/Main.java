@@ -1,4 +1,3 @@
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -182,33 +181,33 @@ class Device implements Runnable, AlarmInterface {
 
         SwingUtilities.invokeLater(() -> {
             String displayStatusText;
-            String batteryText = currentBatteryVal + "%";
+            String batteryText = currentBatteryVal + "%"; // 默认电池文本
 
             if (currentStatusVal == DeviceStatus.DROWNING) {
-                displayStatusText = "<html><font color=\'red\'>DROWNING</font></html>";
-                batteryText = "<html><font color=\'red\'>" + currentBatteryVal + "%</font></html>";
-            } else if (currentStatusVal == DeviceStatus.LOW_BATTERY || currentBatteryVal < 10) {
-                displayStatusText = "<html><font color=\'yellow\'>LOW BATTERY</font></html>";
-                batteryText = "<html><font color=\'yellow\'>" + currentBatteryVal + "%</font></html>";
+                displayStatusText = "<html><font color=\\'red\\'>DROWNING</font></html>";
+                batteryText = "<html><font color=\\'red\\'>" + currentBatteryVal + "%</font></html>";
+            } else if (currentStatusVal == DeviceStatus.LOW_BATTERY) { // 简化条件
+                displayStatusText = "<html><font color=\\'yellow\\'>LOW BATTERY</font></html>";
+                batteryText = "<html><font color=\\'yellow\\'>" + currentBatteryVal + "%</font></html>";
             } else { // NORMAL
                 displayStatusText = "NORMAL";
             }
 
             int rowIndex = -1;
-            try {
-                // 假设 ID 是 "DeviceX"，其中 X 是行索引
-                rowIndex = Integer.parseInt(currentId.substring(6));
-            } catch (NumberFormatException | IndexOutOfBoundsException e) {
-                System.err.println("解析设备ID以更新表格时出错: " + currentId + " - " + e.getMessage());
-                return; // 如果行索引未知，则无法更新
+            // 通过迭代查找具有匹配ID的行
+            for (int i = 0; i < tableModel.getRowCount(); i++) {
+                if (tableModel.getValueAt(i, 0).equals(currentId)) {
+                    rowIndex = i;
+                    break;
+                }
             }
 
-            if (rowIndex >= 0 && rowIndex < tableModel.getRowCount()) {
+            if (rowIndex != -1) {
                 tableModel.setValueAt(batteryText, rowIndex, 1);
                 tableModel.setValueAt("(" + currentXVal + ", " + currentYVal + ")", rowIndex, 2);
                 tableModel.setValueAt(displayStatusText, rowIndex, 3);
             } else {
-                System.err.println("行索引 " + rowIndex + " 超出表格模型范围 (行数: " + tableModel.getRowCount() + "). 设备 ID: " + currentId);
+                System.err.println("在表格模型中未找到设备 ID: " + currentId + "。无法更新其行。");
             }
         });
     }
@@ -241,6 +240,7 @@ class Device implements Runnable, AlarmInterface {
 
 // 服务器类
 class Server {
+    public static final int DEFAULT_PORT = 8888; // 服务器默认端口
     private final Device[] devices; // 设备数组
     private final String username; // 用户名
     private final String password; // 密码
@@ -303,7 +303,7 @@ class Server {
 
         // 允许在密码字段上按 Enter 键登录
         passwordField.addActionListener(e -> loginButton.doClick());
-        usernameField.addActionListener(e -> passwordField.requestFocusInWindow());
+        usernameField.addActionListener(ignored -> passwordField.requestFocusInWindow());
 
 
         loginButton.addActionListener(new ActionListener() {
@@ -348,8 +348,8 @@ class Server {
     }
 
     public void startServer() throws IOException {
-        ServerSocket serverSocket = new ServerSocket(8888);
-        System.out.println("服务器已在端口 8888 启动。等待客户端连接...");
+        ServerSocket serverSocket = new ServerSocket(DEFAULT_PORT); // 使用常量
+        System.out.println("服务器已在端口 " + DEFAULT_PORT + " 启动。等待客户端连接..."); // 使用常量
         try {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
@@ -430,7 +430,7 @@ class Server {
 }
 
 public class Main {
-    private static final String ALARM_SOUND_FILE_PATH = "sounds/alert.mp3"; // 示例！请更改此路径！
+    private static final String ALARM_SOUND_FILE_PATH = "src/sounds/alert.mp3"; // 更新路径以反映项目结构
 
     public static void main(String[] args) {
         // 创建一个 DefaultTableModel (将被共享)
