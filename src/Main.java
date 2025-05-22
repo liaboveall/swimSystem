@@ -6,9 +6,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Random;
 import jmp123.PlayBack; // 确保 jmp123.jar 在类路径中
-import jmp123.NoPlayerException; // 导入用于异常处理
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import com.formdev.flatlaf.FlatLightLaf; // <-- 添加 FlatLaf 导入
 
 // 设备状态枚举
 enum DeviceStatus {
@@ -29,14 +29,11 @@ interface AlarmInterface {
             PlayBack playBack = new PlayBack(new jmp123.output.Audio());
             playBack.open(soundFilePath, ""); // 使用提供的路径
             playBack.start(true); // 播放警报声音
-        } catch (NoPlayerException e) {
-            System.err.println("错误：初始化音频播放失败 (NoPlayerException): " + e.getMessage());
-            e.printStackTrace();
         } catch (IOException e) {
             System.err.println("错误：播放警报声音失败 (IOException): " + e.getMessage());
             e.printStackTrace();
-        } catch (Exception e) {
-            System.err.println("在警报播放期间发生意外错误: " + e.getMessage());
+        } catch (Exception e) { // 移除了 NoPlayerException，使用通用的 Exception 捕获潜在的 jmp123 库初始化问题
+            System.err.println("在警报播放期间发生意外错误或音频播放器初始化失败: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -433,6 +430,14 @@ public class Main {
     private static final String ALARM_SOUND_FILE_PATH = "src/sounds/alert.mp3"; // 更新路径以反映项目结构
 
     public static void main(String[] args) {
+        // 设置 FlatLaf Look and Feel
+        try {
+            UIManager.setLookAndFeel(new FlatLightLaf());
+        } catch (UnsupportedLookAndFeelException e) {
+            System.err.println("Failed to initialize FlatLaf: " + e.getMessage());
+        }
+
+        // 登录对话框
         // 创建一个 DefaultTableModel (将被共享)
         DefaultTableModel tableModel = new DefaultTableModel();
         tableModel.addColumn("设备 ID");
