@@ -20,7 +20,7 @@
 ## 技术栈
 
 *   **语言**: Java
-*   **GUI**: Java Swing
+*   **GUI**: Java Swing, FlatLaf (用于界面美化)
 *   **音频播放**: `jmp123.jar` 库 (用于播放 MP3 格式的警报声)
 *   **并发**: Java Threads (用于处理多个设备和服务器监听)
 *   **网络**: Java Sockets (用于客户端-服务器通信)
@@ -35,7 +35,8 @@ swimSystem/
 │       └── 1.png
 │       └── 2.png
 ├── lib/                   # 依赖库目录
-│   └── jmp123.jar         # MP3播放库
+│   ├── jmp123.jar         # MP3播放库
+│   └── flatla-3.6.jar     # FlatLaf UI主题库
 ├── src/                   # 源代码目录
 │   ├── Main.java          # 主应用程序入口，包含UI设置和服务器启动
 │   ├── sounds/            # 声音文件目录
@@ -46,7 +47,7 @@ swimSystem/
 ## 先决条件
 
 *   Java Development Kit (JDK) 8 或更高版本。
-*   确保 `jmp123.jar` 文件位于 `lib` 目录下，并且在编译和运行时已添加到项目的类路径中。
+*   确保 `jmp123.jar` 和 `flatla-3.6.jar` 文件位于 `lib` 目录下，并且在编译和运行时已添加到项目的类路径中。
 
 
 ### 登录凭据
@@ -83,6 +84,3 @@ swimSystem/
 *   将设备数据持久化到数据库。
 *   Web界面或移动应用界面。
 *   更安全的认证机制。
-
-## 2025.5
-集成 FlatLaf 库用以美化界面
