@@ -140,7 +140,7 @@ public class Server {
         // 阻塞信号按钮
         JButton blockSignalButton = new JButton("模拟Device0信号丢失");
         blockSignalButton.setToolTipText("点击模拟Device0设备信号丢失，测试溺水警报功能");
-        blockSignalButton.addActionListener(ignored -> {
+        blockSignalButton.addActionListener(_ -> {
             if (devices.length > 0) {
                 int option = JOptionPane.showConfirmDialog(
                     parent,
@@ -159,14 +159,14 @@ public class Server {
         // 刷新按钮
         JButton refreshButton = new JButton("刷新显示");
         refreshButton.setToolTipText("手动刷新设备状态显示");
-        refreshButton.addActionListener(ignored -> {
+        refreshButton.addActionListener(_ -> {
             tableModel.fireTableDataChanged();
             Logger.info("手动刷新设备状态显示");
         });
         
         // 关于按钮
         JButton aboutButton = new JButton("关于系统");
-        aboutButton.addActionListener(ignored -> showAboutDialog(parent));
+        aboutButton.addActionListener(_ -> showAboutDialog(parent));
         
         panel.add(blockSignalButton);
         panel.add(refreshButton);
@@ -227,7 +227,7 @@ public class Server {
         final boolean[] loginSuccess = {false};
         
         // 登录按钮事件
-        loginButton.addActionListener(ignored -> {
+        loginButton.addActionListener(_ -> {
             String inputUsername = usernameField.getText().trim();
             String inputPassword = new String(passwordField.getPassword());
             
@@ -258,11 +258,10 @@ public class Server {
         });
         
         // 取消按钮事件
-        cancelButton.addActionListener(ignored -> loginDialog.dispose());
+        cancelButton.addActionListener(_ -> loginDialog.dispose());
         
-        // Enter键支持
-        passwordField.addActionListener(ignored -> loginButton.doClick());
-        usernameField.addActionListener(ignored -> passwordField.requestFocus());
+        // Enter键支持        passwordField.addActionListener(_ -> loginButton.doClick());
+        usernameField.addActionListener(_ -> passwordField.requestFocus());
         
         buttonPanel.add(loginButton);
         buttonPanel.add(cancelButton);

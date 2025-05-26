@@ -80,20 +80,16 @@ public class ClientSimulator {
                 
                 System.out.println("已发送: " + message);
                 sent++;
-                
-                if (count == 0 || sent < count) {
+                  if (count == 0 || sent < count) {
                     try {
-                        // 使用更现代的延迟方式，例如 ScheduledExecutorService，或者根据具体需求调整
-                        // 这里暂时注释掉，具体实现应根据项目需求和上下文决定
-                        // Introducing a small, fixed delay to prevent tight loop if needed for simulation
-                        // For actual timed sending, a proper timer mechanism should be used.
-                        if (count != 1) { // Avoid delay if only one message or infinite and first message
-                             // Minimal delay to allow other operations, not for precise timing.
-                             Thread.sleep(100); // Example minimal delay
+                        // 使用适当的延迟来避免过快发送
+                        if (count != 1) { 
+                             // 最小延迟，防止过于频繁的网络请求
+                             java.util.concurrent.TimeUnit.MILLISECONDS.sleep(100);
                         }
-                    } catch (InterruptedException e) { // Changed to InterruptedException
+                    } catch (InterruptedException e) {
                         System.out.println("发送被中断: " + e.getMessage());
-                        Thread.currentThread().interrupt(); // Restore interruption status
+                        Thread.currentThread().interrupt(); // 恢复中断状态
                         break;
                     }
                 }

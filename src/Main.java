@@ -1,14 +1,11 @@
+import config.Config;
+import java.util.Random;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import models.Device;
 import models.DeviceStatus;
 import models.Server;
-import config.Config;
 import utils.Logger;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.util.Random;
-
-import com.formdev.flatlaf.FlatLightLaf;
 
 /**
  * 游泳池安全监控系统主类
@@ -38,29 +35,57 @@ public class Main {
         createAndStartServer(devices, tableModel);
         
         Logger.info("=== 系统初始化完成 ===");
-    }
-    
-    /**
+    }      /**
      * 设置系统外观
      */
     private static void setupLookAndFeel() {
         try {
-            UIManager.setLookAndFeel(new FlatLightLaf());
-            Logger.info("FlatLaf外观设置成功");
+            // 尝试使用 FlatLaf 现代外观
+            trySetFlatLaf();
+        } catch (Exception e) {
+            Logger.warning("FlatLaf 外观设置失败，尝试使用系统默认外观: " + e.getMessage());
+            // 回退到系统默认外观
+            trySetSystemLookAndFeel();
+        }
+    }
+    
+    /**
+     * 尝试设置 FlatLaf 外观
+     */
+    private static void trySetFlatLaf() throws Exception {
+        try {
+            Class<?> flatLightLafClass = Class.forName("com.formdev.flatlaf.FlatLightLaf");
+            UIManager.setLookAndFeel((javax.swing.LookAndFeel) flatLightLafClass.getDeclaredConstructor().newInstance());
+            Logger.info("FlatLaf 现代外观设置成功");
             
-            // 设置一些额外的UI属性
+            // 设置一些额外的现代UI属性
             UIManager.put("Button.arc", 8);
             UIManager.put("Component.arc", 8);
             UIManager.put("ProgressBar.arc", 8);
             UIManager.put("TextComponent.arc", 8);
+            UIManager.put("TabbedPane.showTabSeparators", true);
+            UIManager.put("Table.showHorizontalLines", true);
+            UIManager.put("Table.showVerticalLines", false);
             
-        } catch (UnsupportedLookAndFeelException e) {
-            Logger.error("FlatLaf外观设置失败，使用系统默认外观", e);
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (Exception ex) {
-                Logger.error("设置系统默认外观失败", ex);
-            }
+        } catch (ClassNotFoundException e) {
+            throw new Exception("FlatLaf 库未找到，请确保 flatla-3.6.jar 在类路径中", e);
+        }
+    }
+    
+    /**
+     * 尝试设置系统默认外观
+     */
+    private static void trySetSystemLookAndFeel() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            Logger.info("系统默认外观设置成功");
+            
+            // 设置一些基本UI属性
+            UIManager.put("Button.arc", 4);
+            UIManager.put("Component.arc", 4);
+            
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+            Logger.error("系统外观设置失败，使用 Java 默认外观", e);
         }
     }
     

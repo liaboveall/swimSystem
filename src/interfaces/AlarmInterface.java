@@ -1,9 +1,7 @@
 package interfaces;
 
-import utils.Logger;
-import jmp123.PlayBack;
 import java.io.File;
-import java.io.IOException;
+import utils.Logger;
 
 /**
  * 警报接口
@@ -24,14 +22,45 @@ public interface AlarmInterface {
             }
             
             Logger.info("播放警报声音: " + soundFilePath);
-            PlayBack playBack = new PlayBack(new jmp123.output.Audio());
-            playBack.open(soundFilePath, "");
-            playBack.start(true);
             
-        } catch (IOException e) {
-            Logger.error("播放警报声音失败 (IOException)", e);
+            // 尝试使用 jmp123 库播放音频
+            try {
+                Class<?> playBackClass = Class.forName("jmp123.PlayBack");
+                Class<?> audioClass = Class.forName("jmp123.output.Audio");
+                
+                Object audio = audioClass.getDeclaredConstructor().newInstance();
+                Object playBack = playBackClass.getDeclaredConstructor(audioClass).newInstance(audio);
+                
+                // 调用 open 和 start 方法
+                playBackClass.getMethod("open", String.class, String.class).invoke(playBack, soundFilePath, "");
+                playBackClass.getMethod("start", boolean.class).invoke(playBack, true);
+                
+                Logger.info("使用 jmp123 库成功播放警报声音");
+                  } catch (ClassNotFoundException e) {
+                Logger.warning("jmp123 库未找到，警报声音功能不可用");
+                Logger.warning("请确保 jmp123.jar 在类路径中");
+                // 可以在这里添加其他的音频播放方式作为后备
+                playAlternativeWarning();
+            } catch (ReflectiveOperationException | IllegalArgumentException e) {
+                Logger.error("使用 jmp123 播放音频时发生错误", e);
+                playAlternativeWarning();
+            }
+            
+        } catch (SecurityException | IllegalArgumentException e) {
+            Logger.error("警报播放期间发生错误", e);
+        }
+    }
+    
+    /**
+     * 备用警报方式（当音频库不可用时）
+     */
+    static void playAlternativeWarning() {
+        try {
+            // 使用系统蜂鸣声作为备用
+            java.awt.Toolkit.getDefaultToolkit().beep();
+            Logger.info("播放系统蜂鸣声作为警报");
         } catch (Exception e) {
-            Logger.error("警报播放期间发生意外错误", e);
+            Logger.error("播放备用警报失败", e);
         }
     }
     
